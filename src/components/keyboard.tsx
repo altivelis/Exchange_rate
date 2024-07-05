@@ -1,4 +1,4 @@
-import { View, Text, Button } from "react-native";
+import { View, Button } from "react-native";
 
 type Props = {
   currentValue: string;

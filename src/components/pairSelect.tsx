@@ -1,9 +1,8 @@
-import { Text } from "react-native";
 import { useState, useEffect } from "react";
 
 import { IndexPath, Select, SelectItem } from "@ui-kitten/components";
 
-import type { FC } from "react";
+import type { FC, ReactElement } from "react";
 
 type Props = {
   setValue: (value: string) => void;
@@ -48,11 +47,10 @@ const PairSelect: FC<Props> = ({ setValue }) => {
     setValue(pairs[selectedIndex.row]);
   }, [selectedIndex]);
 
-  const renderOption = (title: string): React.ReactElement => <SelectItem title={title} />;
+  const renderOption = (title: string): ReactElement => <SelectItem key={title} title={title} />;
 
   return (
     <Select
-      // placeholder='Default'
       value={displayValue}
       selectedIndex={selectedIndex}
       onSelect={(index) => setSelectedIndex(index as IndexPath)}
