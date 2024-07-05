@@ -3,6 +3,7 @@ import { Calendar } from "react-native-calendars";
 
 type Props = {
   // yyyy/mm/dd
+  date: string;
   dateSetter: (date: string) => void;
 };
 
@@ -14,12 +15,15 @@ type DayObj = {
   year: number;
 };
 
-const DatePicker: FC<Props> = ({ dateSetter }) => {
+const DatePicker: FC<Props> = ({ date, dateSetter }) => {
   return (
     <Calendar
       onDayPress={(day: DayObj) => {
         const date = day.dateString.replace(/-/g, "/");
         dateSetter(date);
+      }}
+      markedDates={{
+        [date.replace(/\//g, "-")]: { selected: true, disableTouchEvent: true },
       }}
     />
   );
