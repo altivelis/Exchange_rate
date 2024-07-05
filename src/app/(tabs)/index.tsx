@@ -1,70 +1,68 @@
-import { Image, Platform, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, Button } from "react-native";
+import { useState } from "react";
 
-import { HelloWave } from '@/src/components/HelloWave';
-import ParallaxScrollView from '@/src/components/ParallaxScrollView';
-import { ThemedText } from '@/src/components/ThemedText';
-import { ThemedView } from '@/src/components/ThemedView';
+import { exchange } from "@/src/components/exchange";
+import { Keyboard } from "@/src/components/keyboard";
+import { DatePicker } from "@/src/components/datePicker";
+import { PairSelect } from "@/src/components/pairSelect";
 
-export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+import type { FC } from "react";
+
+const HomeScreen: FC = () => {
+  const today = new Date();
+  const [value, setValue] = useState<string>("");
+  const [pair, setPair] = useState<string>("USD/JPY");
+  const [date, setDate] = useState<string>(
+    `${today.getFullYear()}/${String(today.getMonth() + 1).padStart(2, "0")}/${String(today.getDate()).padStart(2, "0")}`
   );
-}
+  const [result, setResult] = useState<number | string>("");
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
+  return (
+    <ScrollView>
+      <View className="mt-14 mb-4">
+        <Text className="text-center font-semibold text-2xl">通貨換算ツール</Text>
+      </View>
+      <View className="mx-4">
+        <DatePicker date={date} dateSetter={setDate} />
+        <View className="mt-2">
+          <PairSelect setValue={setPair} />
+        </View>
+        <View className="flex-row gap-1 justify-between items-center mt-2 mr-2">
+          <View className="flex-1 flex-row gap-1 justify-between items-center">
+            <Text className="flex-1 border-dotted border-[1px] border-gray-500 py-1.5 px-2">{value}</Text>
+            <Text>{pair.split("/")[0]}</Text>
+          </View>
+          <View>
+            <Text>→</Text>
+          </View>
+          <View className="flex-1 flex-row gap-1 justify-between items-center">
+            <Text className="flex-1 border-dotted border-[1px] border-gray-500 py-1.5 px-2">
+              {Number(result).toFixed(5)}
+            </Text>
+            <Text>{pair.split("/")[1]}</Text>
+          </View>
+        </View>
+        <View className="mt-3 mb-5">
+          <Text className="text-[10px] text-center">※あくまでもこの結果は一つの目安としてお使いください</Text>
+        </View>
+        <Button
+          onPress={() => {
+            exchange({
+              currency: Number(value),
+              from: pair.split("/")[0],
+              to: pair.split("/")[1],
+              date: date.replace(/\//g, ""),
+              setResult: setResult,
+            });
+          }}
+          title={`${date} のレートで ${pair} を計算する`}
+        />
+        <View className="mt-8">
+          <Keyboard currentValue={value} setValue={setValue} />
+        </View>
+      </View>
+    </ScrollView>
+  );
+};
+
+export default HomeScreen;
