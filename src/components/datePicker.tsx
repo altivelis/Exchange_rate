@@ -1,9 +1,8 @@
 import type { FC } from "react";
-import { Text } from "react-native";
 import { Calendar } from "react-native-calendars";
 
 type Props = {
-  // yyyy-mm-dd
+  // yyyy/mm/dd
   dateSetter: (date: string) => void;
 };
 
@@ -19,7 +18,7 @@ const DatePicker: FC<Props> = ({ dateSetter }) => {
   return (
     <Calendar
       onDayPress={(day: DayObj) => {
-        const date = day.dateString.replace(/-/g, "");
+        const date = day.dateString.replace(/-/g, "/");
         dateSetter(date);
       }}
     />

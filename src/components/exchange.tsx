@@ -40,20 +40,18 @@ export const exchange = async ({ currency, from, to, date, setResult }: Props): 
     }
   }
 
-  const endPoint = "https://api.z.y4e.net/public";
+  const endPoint = "https://forex-api-coin-z.vercel.app/public";
   const path = `/v1/klines?symbol=${symbols[index][0]}_${symbols[index][1]}&priceType=ASK&interval=1min&date=${date}`;
 
   setResult(
     await axios
       .get(endPoint + path)
       .then((res: AxiosResponse) => {
-        console.log(res.data.data);
         const rate = res.data.data[res.data.data.length - 1].close;
         const result = right ? currency * rate : currency / rate;
         return result;
       })
       .catch((err: Error) => {
-        console.log(err);
         return "";
       })
   );
